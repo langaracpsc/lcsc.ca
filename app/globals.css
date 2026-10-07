@@ -1,0 +1,217 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Drives every `dark:` utility. shadcn's convention is a class on <html>, which
+   is what the theme toggle flips and what the no-flash script sets pre-paint. */
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   LCSC palette — the single source of truth, taken verbatim from the Figma
+   file's local variables (collection "LCSC / Color").
+
+   Everything below this block is shadcn's semantic layer, and every entry in it
+   points BACK at one of these. shadcn ships its own neutral greys; keeping them
+   would mean two palettes in one stylesheet, drifting apart. The names shadcn
+   expects are unavoidable (its components reference them), so they are aliases
+   here, not a second set of values.
+--------------------------------------------------------------------------- */
+@theme {
+  --color-ink: #181818; /* headings, body */
+  --color-paper: #f4f1ec; /* page ground — warm, not white */
+  --color-red: #b4232b; /* the single accent */
+  --color-red-hover: #941d24;
+  --color-muted: #686560;
+  --color-line: #d7d2ca;
+  --color-white: #ffffff;
+  --color-panel: #242424; /* dark surfaces, e.g. the hero's bottom bar */
+
+  /* LCSC / Spacing — the Figma file's spacing scale. These generate the named
+     utilities the components use (`py-md`, `gap-lg`, `mt-xl`, …). They are NOT
+     decorative: without them those class names emit no CSS at all and the
+     layout silently collapses to no spacing, which is exactly what happened
+     when this block was dropped during the shadcn integration. */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 48px;
+  --spacing-xl: 80px;
+
+  /* The home page photo marquee: one full set of twelve photos every 120s,
+     about 30px a second (the track holds two sets and moves by half its
+     width, so the loop is seamless). */
+  --animate-marquee: marquee 120s linear infinite;
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+/*
+  TYPE — the Figma file documents the stack explicitly:
+    "TYPE / Space Grotesk · DM Sans · IBM Plex Mono"
+
+  Two faces are substituted by decision (see app/layout.tsx): Archivo for the
+  display face, because Space Grotesk is a well-known AI-generated-site tell,
+  and IBM Plex Sans for UI and body in place of DM Sans. IBM Plex Mono is the
+  design's own label face (`LCSC / Label`) and is used as specified.
+*/
+@theme inline {
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-ui: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  /* Display only: the oversized hero headline. */
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* shadcn semantic tokens -> Tailwind colour utilities */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  /* Brand red used AS TEXT (the hero eyebrow, nav hover). It cannot be the raw
+     `red` token in both themes: #b4232b on ink is only ~2.5:1. In light it is
+     the untouched Figma value; in dark it is lightened to clear 4.5:1. */
+  --color-brand: var(--brand);
+
+  /* The design is square. Every corner in the Figma file is a hard 90°, so the
+     radius scale is deliberately collapsed to zero rather than shadcn's 0.625rem
+     — otherwise every shadcn component arrives rounded and off-brand. */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+}
+
+/* --- Light: aliases onto the Figma tokens. Nothing new is invented here. --- */
+:root {
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+  --card: var(--color-white);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-red);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-line);
+  --secondary-foreground: var(--color-ink);
+  --muted: var(--color-line);
+  --muted-foreground: var(--color-muted);
+  --accent: var(--color-line);
+  --accent-foreground: var(--color-ink);
+  --destructive: var(--color-red);
+  --border: var(--color-line);
+  --input: var(--color-line);
+  --ring: var(--color-red);
+  --brand: var(--color-red);
+  --radius: 0px;
+}
+
+/* --- Dark: DERIVED, NOT FROM THE FIGMA FILE. -------------------------------
+
+   The Figma file has no dark theme — every frame is on paper. So unlike the
+   light block above, these are invented, and they should be reviewed as design
+   work rather than treated as extracted values. The reasoning:
+
+     background   ink #181818   — the page ground inverts to the ink token, so
+                                  dark mode is the same palette read the other
+                                  way round rather than a new one.
+     card         panel #242424 — the design already defines panel as its dark
+                                  surface (the hero's bottom bar uses it), so
+                                  raised surfaces reuse it rather than a new grey.
+     primary      paper         — the design's own interaction rule is "Light
+                                  actions on dark surfaces. Red actions on light
+                                  surfaces." On a dark ground the primary action
+                                  must therefore be LIGHT, not red. This is the
+                                  one that most obviously needs a human eye.
+     muted-foreground #a39d95   — muted #686560 is a light-ground colour and sits
+                                  at ~2.4:1 on ink. Lightened to clear 4.5:1.
+     border/input #333333       — line #d7d2ca is far too bright on ink.
+     destructive  #e0555d       — the brand red is reserved for brand actions;
+                                  a lighter red separates "error" from "brand".
+   -------------------------------------------------------------------------- */
+.dark {
+  --background: var(--color-ink);
+  --foreground: var(--color-paper);
+  --card: var(--color-panel);
+  --card-foreground: var(--color-paper);
+  --popover: var(--color-panel);
+  --popover-foreground: var(--color-paper);
+  --primary: var(--color-paper);
+  --primary-foreground: var(--color-ink);
+  --secondary: #2e2e2e; /* derived */
+  --secondary-foreground: var(--color-paper);
+  --muted: #2e2e2e; /* derived */
+  --muted-foreground: #a39d95; /* derived */
+  --accent: #2e2e2e; /* derived */
+  --accent-foreground: var(--color-paper);
+  --destructive: #e0555d; /* derived */
+  --border: #333333; /* derived */
+  --input: #333333; /* derived */
+  --ring: var(--color-paper);
+  --brand: #e07a80; /* derived — red lightened for text use on a dark ground */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+}
+
+/* The hero's nav and headline are type-led, so keep focus obvious. This reads
+   `--ring` rather than the red token directly so it flips with the theme — red
+   on a dark ground does not clear contrast. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+/* Accessibility: the hero is a large motion surface. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* The Magic UI theme toggler (app/components/ui/animated-theme-toggler.tsx)
+   animates the theme change as a clip-path wipe over a View Transition. These
+   rules belong with it: the default cross-fade is switched off so only the
+   wipe shows, the new snapshot starts clipped to the collapsed shape the
+   toggler sets (so Firefox doesn't flash the new theme before the animation
+   starts), and the transition group lasts as long as the wipe. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html[data-magicui-theme-vt="active"]::view-transition-new(root) {
+  clip-path: var(--magicui-theme-vt-clip-from);
+}
+html[data-magicui-theme-vt="active"]::view-transition-group(root) {
+  animation-duration: var(--magicui-theme-toggle-vt-duration);
+}
