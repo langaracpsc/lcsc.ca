@@ -87,7 +87,7 @@ export function MobileMenu({
                 <span className="decoration-[3px] underline-offset-8 group-aria-[current=page]/link:underline">
                   {l.label}
                 </span>
-                &nbsp;&nbsp;<span aria-hidden="true">↗</span>
+                &nbsp;&nbsp;<span aria-hidden="true">→</span>
               </NavLink>
             </li>
           ))}

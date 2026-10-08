@@ -12,6 +12,7 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: "Build Nights and Build Labs",
   description: DESCRIPTION,
+  alternates: { canonical: "/build" },
 };
 
 /** Figma "Build / Desktop" (7:81) and "Build / Mobile" (15:386). */

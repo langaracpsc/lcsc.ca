@@ -1,3 +1,6 @@
+/** Production domain (confirmed 2026-10-08). */
+export const ORIGIN = "https://lcsc.ca";
+
 export const SITE = {
   // Luma moved from lu.ma to luma.com; the old host 301s here.
   lumaCalendar: "https://luma.com/lcsc",

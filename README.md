@@ -40,3 +40,4 @@ XDG_CONFIG_HOME="$TEMP/lcsc-xdg" pnpm run dev:vinext
 - Photos are real club photos only, never stock or generated.
 - The nav and footer only link to routes that have a Figma frame.
 - Corners are square, colours come from tokens in `globals.css`, and dark mode is the default.
+- A link's arrow says where it goes: → for a page on this site and ↗ for another site, which opens in a new tab. Mailto links get no arrow. `ButtonLink` picks the arrow from the href and `NewTabCue` adds ↗ with its screen-reader text, so use them where they fit. Nav rows and cards built on `NavLink` or `Link` type → in an `aria-hidden` span.

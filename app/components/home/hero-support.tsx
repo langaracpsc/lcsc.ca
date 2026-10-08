@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { P, typography } from "../typography";
+import { P } from "../typography";
 import { ButtonLink } from "../text-link";
 import { GUTTER } from "../../site-config";
 
@@ -20,10 +19,9 @@ export function HeroSupport() {
 
       {/* A grid on phones so both buttons take the wider one's width. */}
       <div className="grid gap-sm text-center sm:flex sm:justify-center">
-        {/* The Figma's arrow, kept on an internal link until that's decided. */}
-        <Link href="/join" className={typography.button({ tone: "contrast" })}>
-          Join the club&nbsp;&nbsp;<span aria-hidden="true">↗</span>
-        </Link>
+        <ButtonLink href="/join" tone="contrast">
+          Join the club
+        </ButtonLink>
         <ButtonLink href="/build">Explore Build</ButtonLink>
       </div>
     </div>

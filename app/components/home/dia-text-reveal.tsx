@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "../../hooks/use-reduced-motion";
 
 /**
@@ -12,6 +12,12 @@ import { useReducedMotion } from "../../hooks/use-reduced-motion";
 const BAND_HALF = 17;
 const SWEEP_START = -BAND_HALF;
 const SWEEP_END = 100 + BAND_HALF;
+
+/**
+ * Lets a control outside the heading pause the reveal (WCAG 2.2.2). A button
+ * inside the h1 would become part of the heading's name.
+ */
+export const DiaTextRevealPaused = createContext(false);
 
 const sweepEase = (t: number) =>
   t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2;
@@ -53,6 +59,7 @@ export function DiaTextReveal({
   const [index, setIndex] = useState(0);
   const [inView, setInView] = useState(false);
   const reducedMotion = useReducedMotion();
+  const paused = useContext(DiaTextRevealPaused);
   /** Starts fully drawn to match the server render. */
   const posRef = useRef(SWEEP_END);
   const count = text.length;
@@ -80,7 +87,8 @@ export function DiaTextReveal({
       posRef.current = pos;
       el.style.backgroundImage = buildGradient(pos, colors, textColor);
     };
-    if (reducedMotion) {
+    // Pausing mid-sweep finishes drawing the phrase rather than freezing half of it.
+    if (reducedMotion || paused) {
       paint(SWEEP_END);
       return;
     }
@@ -105,8 +113,8 @@ export function DiaTextReveal({
       sweep();
     };
 
-    // A phrase that is already drawn (the server's, or one reduced motion
-    // stopped on) is held, not swept again.
+    // A phrase that is already drawn (the server's, or one reduced motion or
+    // Pause stopped on) is held, not swept again.
     if (posRef.current >= SWEEP_END) timer = setTimeout(next, hold * 1000);
     else sweep();
 
@@ -114,7 +122,7 @@ export function DiaTextReveal({
       cancelAnimationFrame(frame);
       clearTimeout(timer);
     };
-  }, [inView, reducedMotion, count, colors, textColor, duration, hold]);
+  }, [inView, reducedMotion, paused, count, colors, textColor, duration, hold]);
 
   return (
     // Print drops the gradient so the text falls back to the heading colour.

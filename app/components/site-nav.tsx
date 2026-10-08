@@ -57,7 +57,7 @@ export function SiteNav() {
           <span className="decoration-2 underline-offset-4 group-aria-[current=page]/link:underline">
             Join the club
           </span>
-          &nbsp;&nbsp;<span aria-hidden="true">↗</span>
+          &nbsp;&nbsp;<span aria-hidden="true">→</span>
         </NavLink>
       </nav>
     </header>

@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Events",
   description:
     "Workshops and hackathons run by the Langara Computer Science Club. Dates and sign-ups are on the club’s Luma calendar.",
+  alternates: { canonical: "/events" },
 };
 
 /** Figma "Events / Desktop" (7:82) and "Events / Mobile" (15:476). */

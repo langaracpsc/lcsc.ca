@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Join",
   description:
     "Membership is free. Sign up on the club’s Luma calendar, then say hi in Discord. All experience levels welcome.",
+  alternates: { canonical: "/join" },
 };
 
 /** Figma "Join / Desktop" (7:85) and "Join / Mobile" (15:743). */

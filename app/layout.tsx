@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { RouteAnnouncer } from "./components/route-announcer";
+import { ORIGIN } from "./site-config";
 import "./globals.css";
 
 /**
@@ -30,18 +31,27 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  // Without it, canonicals and og:url stay relative and the share image points
+  // at localhost. Dev still uses localhost for the image, as Next does.
+  metadataBase: new URL(ORIGIN),
   title: {
     default: "Langara Computer Science Club",
     template: "%s | Langara Computer Science Club",
   },
   description:
     "A student-run computer science club at Langara College. All experience levels welcome.",
-  // Routes' titles and descriptions fill og:* and twitter:* on their own.
-  // metadataBase, og:image, og:url, canonical and a sitemap wait for the
-  // production domain; without metadataBase vinext writes localhost URLs.
+  // og:* and twitter:* fill in from each route's title and description and
+  // from opengraph-image.png. Canonicals live in each page, so 404s get none.
   openGraph: {
     siteName: "Langara Computer Science Club",
     type: "website",
+    locale: "en_CA",
+    // "./" resolves to each route's own path. A page that set openGraph would
+    // replace this whole object, not merge into it.
+    url: "./",
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 

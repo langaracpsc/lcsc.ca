@@ -12,6 +12,7 @@ import { EventsFeature } from "./components/home/events-feature";
 export const metadata: Metadata = {
   description:
     "A student-run club at Langara College for people who want to build things and get better at it together.",
+  alternates: { canonical: "/" },
 };
 
 /** Figma "Home / Desktop" (4:20) and "Home / Mobile" (15:260). */

@@ -32,9 +32,16 @@ function LumaMembership() {
           events.
         </P>
 
-        <Mono tone="muted">
-          Free · Applications are reviewed by a club organizer
-        </Mono>
+        {/* Luma's tier form requires both fields (checked 2026-10-08), so
+            people should know before they click through. */}
+        <div className="flex flex-col gap-xs">
+          <Mono tone="muted">
+            Free · Applications are reviewed by a club organizer
+          </Mono>
+          <P tone="muted" className="max-w-[52ch] text-pretty">
+            The application asks for your Langara student ID and student email.
+          </P>
+        </div>
 
         <ButtonLink href={SITE.lumaCalendar} tone="primary">
           Join the club
@@ -47,15 +54,27 @@ function LumaMembership() {
           from luma.com/lcsc; re-take it if the tier or Luma's design changes.
           Dimmed in dark mode because it's a light capture. */}
       <figure className="mt-lg">
-        <img
-          src="/luma-join.webp"
-          alt="The LCSC Member card on the club’s Luma calendar, showing the Free and Require Approval labels and a Join button."
-          width={980}
-          height={202}
-          loading="lazy"
-          decoding="async"
-          className="border-border w-full max-w-[560px] border dark:brightness-[0.85]"
-        />
+        <picture className="block">
+          {/* The wide capture's text shrinks to about 5px on phones, so they get
+              Luma's phone layout, never shown wider than its 374px capture. */}
+          <source
+            // The built CSS's max-sm query: rem, like the img's sm: cap, so the
+            // two switch together whatever the browser's default font size.
+            media="not all and (min-width: 40rem)"
+            srcSet="/luma-join-mobile.webp"
+            width={1122}
+            height={534}
+          />
+          <img
+            src="/luma-join.webp"
+            alt="The LCSC Member card on the club’s Luma calendar, showing the Free and Require Approval labels and a Join button."
+            width={980}
+            height={202}
+            loading="lazy"
+            decoding="async"
+            className="border-border w-full max-w-[374px] border sm:max-w-[560px] dark:brightness-[0.85]"
+          />
+        </picture>
         <P as="figcaption" size="small" tone="muted" className="mt-sm max-w-[46ch]">
           On Luma, find the <strong className="font-semibold">LCSC Member</strong>{" "}
           card and hit <strong className="font-semibold">Join</strong>.

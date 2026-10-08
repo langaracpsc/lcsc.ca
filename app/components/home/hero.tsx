@@ -1,5 +1,6 @@
 import { FloatingPhotos, type Photo } from "./floating-photos";
 import { DiaTextReveal } from "./dia-text-reveal";
+import { HeroHeadline } from "./hero-headline";
 import { H1 } from "../typography";
 import { GUTTER } from "../../site-config";
 
@@ -25,29 +26,31 @@ export function Hero() {
       <FloatingPhotos photos={PHOTOS} />
 
       <div className="relative z-10 text-center">
-        {/* Own size so it clears the photos. Under 25.75rem the longest phrase
-            wraps, so 3lh is reserved to stop layout shift; recheck if the
-            phrases change. Leading is restated because cn drops the role's. */}
-        <H1 className="text-[clamp(2.25rem,5vw,4.5rem)] leading-[1.08] max-[25.75rem]:min-h-[3lh]">
-          Bring an idea.
-          <br />
-          <DiaTextReveal
-            text={[
-              "Leave with a project.",
-              "Learn to Build.",
-              "Turn ideas into code.",
-              "Leave with free food.",
-              "Build something real.",
-              "Find your partners.",
-            ]}
-            // Starts at the text colour, not black, so dark mode shows no
-            // dark gap in the band.
-            colors={["var(--foreground)", "var(--color-red)", "#e8722a", "#f5c542"]}
-            hold={2}
-            // Phones wrap instead of running off the screen.
-            className="max-sm:whitespace-normal"
-          />
-        </H1>
+        <HeroHeadline>
+          {/* Own size so it clears the photos. Under 25.75rem the longest phrase
+              wraps, so 3lh is reserved to stop layout shift; recheck if the
+              phrases change. Leading is restated because cn drops the role's. */}
+          <H1 className="text-[clamp(2.25rem,5vw,4.5rem)] leading-[1.08] max-[25.75rem]:min-h-[3lh]">
+            Bring an idea.
+            <br />
+            <DiaTextReveal
+              text={[
+                "Leave with a project.",
+                "Learn to Build.",
+                "Turn ideas into code.",
+                "Leave with free food.",
+                "Build something real.",
+                "Find your partners.",
+              ]}
+              // Starts at the text colour, not black, so dark mode shows no
+              // dark gap in the band.
+              colors={["var(--foreground)", "var(--color-red)", "#e8722a", "#f5c542"]}
+              hold={2}
+              // Phones wrap instead of running off the screen.
+              className="max-sm:whitespace-normal"
+            />
+          </H1>
+        </HeroHeadline>
       </div>
     </section>
   );

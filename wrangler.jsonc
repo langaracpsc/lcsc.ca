@@ -10,5 +10,14 @@
     "directory": "dist/client",
     "not_found_handling": "none",
     "binding": "ASSETS"
-  }
+  },
+  "routes": [
+    {
+      "pattern": "lcsc.ca",
+      "custom_domain": true
+    }
+  ],
+  // Any route turns wrangler's workers.dev default off, so pin both to keep today's URLs.
+  "workers_dev": true,
+  "preview_urls": true
 }

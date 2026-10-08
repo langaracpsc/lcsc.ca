@@ -33,7 +33,7 @@ export function WhatWeDoStrip() {
               })}
             >
               {item.label}
-              <span aria-hidden="true">&nbsp;&nbsp;↗</span>
+              <span aria-hidden="true">&nbsp;&nbsp;→</span>
             </Link>
           </li>
         ))}
