@@ -15,6 +15,11 @@
     {
       "pattern": "lcsc.ca",
       "custom_domain": true
+    },
+    // next.config.ts redirects www to the apex.
+    {
+      "pattern": "www.lcsc.ca",
+      "custom_domain": true
     }
   ],
   // Any route turns wrangler's workers.dev default off, so pin both to keep today's URLs.
