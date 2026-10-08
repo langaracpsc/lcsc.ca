@@ -1,33 +1,34 @@
 import type { ReactNode } from "react";
 import { H2, H3, P } from "../typography";
 import { SITE, GUTTER } from "../../site-config";
+import { buildAnchor } from "../../content/programs";
 import { TextLink } from "../text-link";
 
-/** Links inside an answer: red on paper, the lightened red on ink. */
-const LINK = "text-brand font-medium";
-
 /**
- * The Figma's FAQ rows, in order. The questions are the design's; the answers
- * were shortened into plain words, and the Luma-first membership (D4) changes
- * one destination: the design sent people to Discord for event details, which
- * now live on Luma. Discord stays
- * where the design uses it for conversation.
+ * The Figma's questions with shorter answers. Event details point to Luma
+ * rather than Discord, since events live there.
  */
 const QUESTIONS: { q: string; a: ReactNode }[] = [
   {
     q: "Do I need to be good at coding?",
-    a: "No. All experience levels are welcome.",
+    // Claims only what the program cards say ("Beginner friendly", "Peer
+    // support"); the page note already says all levels are welcome.
+    a: "No. Build Labs are beginner friendly, and at Build Nights the people around you can help.",
   },
   {
     q: "What should I come to first?",
     a: (
       <>
         Start with the next{" "}
-        <TextLink href="/build#build-nights" className={LINK}>
+        <TextLink href={buildAnchor("build-nights")}>
           Build Night
         </TextLink>{" "}
-        or a beginner-friendly workshop. Check the event details on{" "}
-        <TextLink href={SITE.lumaCalendar} className={LINK}>
+        or{" "}
+        <TextLink href={buildAnchor("build-labs")}>
+          Build Lab
+        </TextLink>
+        . Check the event details on{" "}
+        <TextLink href={SITE.lumaCalendar}>
           Luma
         </TextLink>{" "}
         before you go.
@@ -43,11 +44,11 @@ const QUESTIONS: { q: string; a: ReactNode }[] = [
     a: (
       <>
         Say so in{" "}
-        <TextLink href={SITE.discordInvite} className={LINK}>
+        <TextLink href={SITE.discordInvite}>
           Discord
         </TextLink>
         . You can help run an event or join a{" "}
-        <TextLink href="/projects#contribute" className={LINK}>
+        <TextLink href="/projects#contribute">
           club project
         </TextLink>
         .
@@ -57,26 +58,14 @@ const QUESTIONS: { q: string; a: ReactNode }[] = [
 ];
 
 /**
- * `Join / Questions` (Figma 12:263 desktop, 15:761 mobile).
- *
- * Desktop: the H2, then four rows, each a question in the H3 face beside its
- * answer in Body large — the frame's 460px and 740px columns with 80px
- * between, kept as a 23:37 ratio so the pair scales with the page instead of
- * overflowing it. Mobile: question over answer, 24px apart.
- *
- * Rows are spaced, not ruled: both frames set them 32px (desktop) and 24px
- * (mobile) apart with no divider between them.
- *
- * Each question is a real `<h3>` under the section's `<h2>`, so the rows show
- * up in a screen reader's heading list and the outline stays in order. The
- * hairline above the section is not in the frame: it separates the FAQ from
- * the consent note, which sits on the same surface just above it.
+ * Figma 12:263 (mobile 15:761). 23fr/37fr is the frame's 460:740 split. Each
+ * question is an `<h3>` so it shows up in a screen reader's heading list.
  */
 export function JoinQuestions() {
   return (
     <section
       aria-labelledby="join-questions"
-      className={`${GUTTER} border-border border-t py-12 md:py-xl`}
+      className={`${GUTTER} border-border border-t py-lg md:py-xl`}
     >
       <H2 id="join-questions" className="max-w-[1100px]">
         Common questions

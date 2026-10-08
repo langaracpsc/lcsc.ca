@@ -1,15 +1,11 @@
 /**
- * The Build series — the three program cards shared by the home page's
- * "Build overview" and the /build page's program grid.
- *
- * Titles, categories and meta lines are the Figma's `Card / Program`
- * instances; the descriptions were rewritten in plainer words. The Figma's own
- * content rules say "Project 0 details need club review", so the Project 0
- * card says nothing about what it is (no dates, no scope, no promises) until
- * the club signs off.
+ * Shared by the home page and /build. Titles, meta lines and categories are the
+ * Figma's, except Build Labs' category (the Figma's "Learn by doing");
+ * descriptions are plainer. Project 0 says nothing about what it is until the
+ * club reviews it (a Figma content rule).
  */
 export type Program = {
-  /** Anchor id on /build, so home cards can deep-link to the right card. */
+  /** Anchor on /build that the home cards deep-link to. */
   id: string;
   category: string;
   title: string;
@@ -18,7 +14,7 @@ export type Program = {
   action: string;
 };
 
-export const PROGRAMS: Program[] = [
+export const PROGRAMS = [
   {
     id: "build-nights",
     category: "Drop in & build",
@@ -26,16 +22,16 @@ export const PROGRAMS: Program[] = [
     description:
       "Work on your own project with other people around, and get help when a bug won’t budge.",
     meta: "Peer support · All levels",
-    action: "Explore Build Nights",
+    action: "More about Build Nights",
   },
   {
     id: "build-labs",
-    category: "Learn by doing",
+    category: "Workshops",
     title: "Build Labs",
     description:
-      "Guided workshops. Learn a skill, then use it on something of your own.",
+      "Someone walks you through a skill, and you try it on something of your own.",
     meta: "Hands on · Beginner friendly",
-    action: "Explore Build Labs",
+    action: "More about Build Labs",
   },
   {
     id: "project-0",
@@ -46,4 +42,9 @@ export const PROGRAMS: Program[] = [
     meta: "Community · Get involved",
     action: "Ask about Project 0",
   },
-];
+] as const satisfies readonly Program[];
+
+export type ProgramId = (typeof PROGRAMS)[number]["id"];
+
+/** Typed, so a misspelt id fails the build. */
+export const buildAnchor = (id: ProgramId) => `/build#${id}`;

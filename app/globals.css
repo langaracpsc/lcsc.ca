@@ -2,44 +2,32 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Drives every `dark:` utility. shadcn's convention is a class on <html>, which
-   is what the theme toggle flips and what the no-flash script sets pre-paint. */
+/* `dark:` follows a class on <html>, set by next-themes and the theme toggle. */
 @custom-variant dark (&:is(.dark *));
 
-/* ---------------------------------------------------------------------------
-   LCSC palette — the single source of truth, taken verbatim from the Figma
-   file's local variables (collection "LCSC / Color").
-
-   Everything below this block is shadcn's semantic layer, and every entry in it
-   points BACK at one of these. shadcn ships its own neutral greys; keeping them
-   would mean two palettes in one stylesheet, drifting apart. The names shadcn
-   expects are unavoidable (its components reference them), so they are aliases
-   here, not a second set of values.
---------------------------------------------------------------------------- */
+/* The Figma's "LCSC / Color" variables. The shadcn tokens below alias onto
+   these, so the site has one palette. */
 @theme {
-  --color-ink: #181818; /* headings, body */
-  --color-paper: #f4f1ec; /* page ground — warm, not white */
-  --color-red: #b4232b; /* the single accent */
+  --color-ink: #181818;
+  --color-paper: #f4f1ec;
+  --color-red: #b4232b;
   --color-red-hover: #941d24;
   --color-muted: #686560;
   --color-line: #d7d2ca;
   --color-white: #ffffff;
-  --color-panel: #242424; /* dark surfaces, e.g. the hero's bottom bar */
+  --color-panel: #242424;
+  /* Not in the Figma: muted text on ink (4.5:1, where muted is 2.4:1). */
+  --color-muted-dark: #a39d95;
 
-  /* LCSC / Spacing — the Figma file's spacing scale. These generate the named
-     utilities the components use (`py-md`, `gap-lg`, `mt-xl`, …). They are NOT
-     decorative: without them those class names emit no CSS at all and the
-     layout silently collapses to no spacing, which is exactly what happened
-     when this block was dropped during the shadcn integration. */
+  /* Figma "LCSC / Spacing". Without these, `py-md` and the like emit no CSS. */
   --spacing-xs: 8px;
   --spacing-sm: 16px;
   --spacing-md: 24px;
   --spacing-lg: 48px;
   --spacing-xl: 80px;
 
-  /* The home page photo marquee: one full set of twelve photos every 120s,
-     about 30px a second (the track holds two sets and moves by half its
-     width, so the loop is seamless). */
+  /* Home photo marquee. The track holds two sets of photos, so moving it by
+     half loops seamlessly; 120s per set is about 30px a second. */
   --animate-marquee: marquee 120s linear infinite;
   @keyframes marquee {
     to {
@@ -48,24 +36,12 @@
   }
 }
 
-/*
-  TYPE — the Figma file documents the stack explicitly:
-    "TYPE / Space Grotesk · DM Sans · IBM Plex Mono"
-
-  Two faces are substituted by decision (see app/layout.tsx): Archivo for the
-  display face, because Space Grotesk is a well-known AI-generated-site tell,
-  and IBM Plex Sans for UI and body in place of DM Sans. IBM Plex Mono is the
-  design's own label face (`LCSC / Label`) and is used as specified.
-*/
 @theme inline {
   --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-ui: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
-  /* Display only: the oversized hero headline. */
   --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
 
-  /* shadcn semantic tokens -> Tailwind colour utilities */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -83,14 +59,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  /* Brand red used AS TEXT (the hero eyebrow, nav hover). It cannot be the raw
-     `red` token in both themes: #b4232b on ink is only ~2.5:1. In light it is
-     the untouched Figma value; in dark it is lightened to clear 4.5:1. */
+  /* Red used as text. The raw red is 2.5:1 on ink, so dark mode lightens it. */
   --color-brand: var(--brand);
 
-  /* The design is square. Every corner in the Figma file is a hard 90°, so the
-     radius scale is deliberately collapsed to zero rather than shadcn's 0.625rem
-     — otherwise every shadcn component arrives rounded and off-brand. */
+  /* Every corner in the Figma is square, so shadcn's radius scale is zeroed. */
   --radius-sm: 0px;
   --radius-md: 0px;
   --radius-lg: 0px;
@@ -100,7 +72,6 @@
   --radius-4xl: 0px;
 }
 
-/* --- Light: aliases onto the Figma tokens. Nothing new is invented here. --- */
 :root {
   --background: var(--color-paper);
   --foreground: var(--color-ink);
@@ -124,29 +95,9 @@
   --radius: 0px;
 }
 
-/* --- Dark: DERIVED, NOT FROM THE FIGMA FILE. -------------------------------
-
-   The Figma file has no dark theme — every frame is on paper. So unlike the
-   light block above, these are invented, and they should be reviewed as design
-   work rather than treated as extracted values. The reasoning:
-
-     background   ink #181818   — the page ground inverts to the ink token, so
-                                  dark mode is the same palette read the other
-                                  way round rather than a new one.
-     card         panel #242424 — the design already defines panel as its dark
-                                  surface (the hero's bottom bar uses it), so
-                                  raised surfaces reuse it rather than a new grey.
-     primary      paper         — the design's own interaction rule is "Light
-                                  actions on dark surfaces. Red actions on light
-                                  surfaces." On a dark ground the primary action
-                                  must therefore be LIGHT, not red. This is the
-                                  one that most obviously needs a human eye.
-     muted-foreground #a39d95   — muted #686560 is a light-ground colour and sits
-                                  at ~2.4:1 on ink. Lightened to clear 4.5:1.
-     border/input #333333       — line #d7d2ca is far too bright on ink.
-     destructive  #e0555d       — the brand red is reserved for brand actions;
-                                  a lighter red separates "error" from "brand".
-   -------------------------------------------------------------------------- */
+/* Dark is derived; the Figma has none. Primary turns paper per its "light
+   actions on dark surfaces" note, and muted, border and brand are lightened
+   for contrast on ink. */
 .dark {
   --background: var(--color-ink);
   --foreground: var(--color-paper);
@@ -156,17 +107,17 @@
   --popover-foreground: var(--color-paper);
   --primary: var(--color-paper);
   --primary-foreground: var(--color-ink);
-  --secondary: #2e2e2e; /* derived */
+  --secondary: #2e2e2e;
   --secondary-foreground: var(--color-paper);
-  --muted: #2e2e2e; /* derived */
-  --muted-foreground: #a39d95; /* derived */
-  --accent: #2e2e2e; /* derived */
+  --muted: #2e2e2e;
+  --muted-foreground: var(--color-muted-dark);
+  --accent: #2e2e2e;
   --accent-foreground: var(--color-paper);
-  --destructive: #e0555d; /* derived */
-  --border: #333333; /* derived */
-  --input: #333333; /* derived */
+  --destructive: #e0555d;
+  --border: #333333;
+  --input: #333333;
   --ring: var(--color-paper);
-  --brand: #e07a80; /* derived — red lightened for text use on a dark ground */
+  --brand: #e07a80;
 }
 
 @layer base {
@@ -177,33 +128,41 @@
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
   }
+  /* Keeps a lone word off the last line. Headings use text-balance instead. */
+  p,
+  li {
+    text-wrap: pretty;
+  }
+  /* Tailwind v4's preflight dropped the pointer cursor on buttons; this is its
+     documented v3-compat rule. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
-/* The hero's nav and headline are type-led, so keep focus obvious. This reads
-   `--ring` rather than the red token directly so it flips with the theme — red
-   on a dark ground does not clear contrast. */
+/* Reads --ring so bands can pin it to paper or white where red is under 3:1. */
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 3px;
 }
 
-/* Accessibility: the hero is a large motion surface. */
+/* Transitions go to 0s, not 0.01ms: a tiny duration still starts a transition
+   on every element, and a theme switch then painted old colours for a frame
+   (ink on ink). Nothing listens for transitionend. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
   }
 }
 
-/* The Magic UI theme toggler (app/components/ui/animated-theme-toggler.tsx)
-   animates the theme change as a clip-path wipe over a View Transition. These
-   rules belong with it: the default cross-fade is switched off so only the
-   wipe shows, the new snapshot starts clipped to the collapsed shape the
-   toggler sets (so Firefox doesn't flash the new theme before the animation
-   starts), and the transition group lasts as long as the wipe. */
+/* The theme toggler's clip-path wipe (ui/animated-theme-toggler.tsx): no
+   cross-fade, and the new snapshot starts clipped so Firefox doesn't flash it. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
@@ -214,4 +173,33 @@ html[data-magicui-theme-vt="active"]::view-transition-new(root) {
 }
 html[data-magicui-theme-vt="active"]::view-transition-group(root) {
   animation-duration: var(--magicui-theme-toggle-vt-duration);
+}
+/* During the wipe, colour transitions would show half-faded text inside the
+   new snapshot, so they are off until the toggler clears the attribute. */
+html[data-magicui-theme-vt="active"] *,
+html[data-magicui-theme-vt="active"] *::before,
+html[data-magicui-theme-vt="active"] *::after {
+  transition: none !important;
+}
+
+/* Print: ink on white in either theme. Backgrounds are forced off, even with
+   "Background graphics" on, so paper and white text (dark bands, buttons,
+   footer) is remapped to ink or it would vanish. */
+@media print {
+  :root,
+  .dark {
+    /* Beats the inline color-scheme next-themes sets on <html>. */
+    color-scheme: light !important;
+    --color-paper: var(--color-ink);
+    --color-white: var(--color-ink);
+    --muted-foreground: var(--color-muted);
+    --brand: var(--color-red);
+    --border: var(--color-line);
+    --input: var(--color-line);
+  }
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+  }
 }

@@ -1,20 +1,7 @@
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-/**
- * Platform marks, used to label where an action leads.
- *
- * These are the platforms' own marks, not generic icons — the whole point is
- * recognition. Lucide (already a dependency) deliberately ships no brand logos,
- * so these come from elsewhere:
- *
- *   Discord, Instagram, GitHub — the official marks, vendored as inline paths
- *             from Simple Icons (24x24 viewBox). Inlined rather than referenced
- *             so they take `currentColor`; any brand colour is the caller's.
- *   Luma    — the official app icon, fetched from luma.com/apple-touch-icon.png
- *             (public/luma.png, 512x512). It has no vector equivalent available,
- *             so it stays a raster; at the sizes used here that is not visible.
- */
+// Discord, Instagram and GitHub paths are from Simple Icons. Luma has no
+// vector mark, so it is the app icon as an image.
 
 export function DiscordLogo({ className }: { className?: string }) {
   return (
@@ -66,15 +53,15 @@ export function LumaLogo({
   className?: string;
 }) {
   return (
-    <Image
-      src="/luma.png"
+    // 64px source: sharp at 3x for the 18-20px it is shown at.
+    <img
+      src="/luma.webp"
       alt=""
       width={size}
       height={size}
       aria-hidden="true"
-      // vinext has no image optimizer configured, so this would otherwise go
-      // through /_next/image only to be redirected to the original file.
-      unoptimized
+      loading="lazy"
+      decoding="async"
       className={cn("shrink-0 rounded-[3px]", className)}
     />
   );

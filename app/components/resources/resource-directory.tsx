@@ -9,7 +9,7 @@ import {
   RESOURCE_CATEGORIES,
   type Resource,
   type ResourceCategory,
-} from "./resource-data";
+} from "../../content/resources";
 
 type Filter = "all" | ResourceCategory;
 
@@ -22,34 +22,22 @@ const LABELS = Object.fromEntries(
   RESOURCE_CATEGORIES.map((c) => [c.id, c.label])
 ) as Record<ResourceCategory, string>;
 
-/** Case-insensitive, and a typed straight apostrophe matches the copy's ’. */
+/** A typed straight apostrophe should match the copy's curly one. */
 const normalize = (s: string) => s.toLowerCase().replace(/[‘’]/g, "'");
 
-/*
-  The Figma `Button` box (52px, 24px sides, 15/22 bold). The pressed chip is
-  `Style=Dark` — ink on paper — which in dark mode has to flip to paper on ink
-  to stay the high-contrast one: that is exactly the `contrast` tone. The
-  others are `Style=Light`, which on a paper ground is just the label; they get
-  a faint fill on hover so they still read as buttons. The pressed chip keeps
-  its fill on hover — it is already the selection, so it shouldn't look like
-  it is changing.
-*/
+// The pressed chip (Figma Style=Dark) keeps its fill on hover since it's
+// already selected. Forced colors drop fills, so it uses SelectedItem there.
 const chip = (pressed: boolean) =>
   cn(
     typography.button({ tone: "contrast" }),
     pressed
-      ? "hover:bg-foreground"
-      : "text-foreground hover:bg-secondary bg-transparent"
+      ? "hover:bg-foreground active:bg-foreground forced-colors:forced-color-adjust-none forced-colors:bg-[SelectedItem] forced-colors:text-[SelectedItemText]"
+      : "text-foreground hover:bg-secondary active:bg-secondary bg-transparent"
   );
 
 /**
- * The search box, filter chips and list of `Resources / Directory` (11:218).
- *
- * The only client component on the page: it receives the rows from the
- * server page, and the server render contains all six of them, so the list
- * works with JavaScript off — the controls just don't filter until it loads.
- *
- * Filtering is local state, nothing more: no URL syncing, no storage.
+ * Figma 11:218. The server render holds every row so the list works without
+ * JavaScript. Filters are local state only, not kept in the URL or storage.
  */
 export function ResourceDirectory({
   resources,
@@ -71,9 +59,8 @@ export function ResourceDirectory({
   const empty = visible.length === 0;
   const filterLabel = filter === "all" ? null : LABELS[filter];
 
-  // One persistent polite live region. It reads the result count while there
-  // are results (visually hidden) and becomes the visible empty state when
-  // there are none.
+  // One live region that stays mounted so every change is announced; it
+  // doubles as the visible empty state.
   const status = empty
     ? query.trim()
       ? `No resources match “${query.trim()}”${filterLabel ? ` in ${filterLabel}` : ""}.`
@@ -85,14 +72,12 @@ export function ResourceDirectory({
   const reset = () => {
     setQuery("");
     setFilter("all");
-    // The reset button unmounts with the empty state; put focus somewhere
-    // useful instead of letting it fall back to the page.
+    // The button unmounts with the empty state, so focus would drop to the page.
     inputRef.current?.focus();
   };
 
   return (
     <div className="flex flex-col gap-md lg:gap-8">
-      {/* ── Search and filters ── */}
       <div className="flex flex-col gap-xs lg:flex-row lg:items-start lg:gap-sm">
         <div className="relative w-full lg:max-w-[570px] lg:flex-1">
           <label htmlFor={searchId} className="sr-only">
@@ -103,9 +88,8 @@ export function ResourceDirectory({
             strokeWidth={2.25}
             className="text-muted-foreground pointer-events-none absolute top-1/2 left-4 size-3.5 -translate-y-1/2"
           />
-          {/* Chrome draws the native clear (×) in its own blue, which the
-              palette doesn't have; greyscale keeps the control, off-brand
-              colour removed (grey on white, white on panel). */}
+          {/* Greyscale on Chrome's native clear button, which is drawn in an
+              off-palette blue. */}
           <input
             ref={inputRef}
             id={searchId}
@@ -141,7 +125,6 @@ export function ResourceDirectory({
         </div>
       </div>
 
-      {/* ── Results ── */}
       <div>
         <div
           className={empty ? "border-border border-y py-lg" : undefined}

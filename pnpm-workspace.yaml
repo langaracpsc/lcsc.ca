@@ -1,9 +1,6 @@
-# pnpm 11 reads settings from this file (not the "pnpm" field in package.json).
-# It blocks dependency postinstall scripts by default for supply-chain safety.
-# These three need theirs to run:
-#   esbuild       - Vite's bundler
-#   workerd       - the Cloudflare Workers runtime
-#   unrs-resolver - native import resolver used by the ESLint config
+# pnpm 11 reads settings here, not from package.json's "pnpm" field, and blocks
+# dependency build scripts unless allowed. These need theirs: esbuild (Vite),
+# workerd (the Workers runtime) and unrs-resolver (the ESLint import resolver).
 allowBuilds:
   esbuild: true
   workerd: true

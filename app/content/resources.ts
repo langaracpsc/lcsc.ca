@@ -1,20 +1,13 @@
-import { LINKS } from "../../site-config";
+import { LINKS } from "../site-config";
 
 /**
- * The /resources directory — the six `Row / Resource` instances in the Figma's
- * `Resources / Directory` (11:218), in its order.
- *
- * Category and title are the Figma copy; descriptions say plainly what is at
- * each link (from the club's old site and the pages themselves). The hrefs are
- * NOT the Figma's: the design still points the planner and the courses API at
- * `planner.langaracs.ca` / `coursesapi.langaracs.ca`, which no longer resolve.
- * Every destination here comes from `LINKS`, which records where each tool
- * actually lives today.
+ * Figma 11:218, in its order. "Courses API" is renamed to match /projects.
+ * Hrefs come from LINKS: the Figma's `*.langaracs.ca` hosts no longer resolve.
  */
 
 export type ResourceCategory = "academic" | "build" | "community";
 
-/** The filter chips after "All", in the Figma's order. */
+/** "All" isn't listed; the directory adds it first. */
 export const RESOURCE_CATEGORIES: readonly {
   id: ResourceCategory;
   label: string;
@@ -29,7 +22,7 @@ export type Resource = {
   category: ResourceCategory;
   title: string;
   description: string;
-  /** Always an external URL: every resource leaves the site. */
+  /** Must be external: rows always open in a new tab. */
   href: string;
 };
 
@@ -58,10 +51,8 @@ export const RESOURCES: readonly Resource[] = [
   {
     id: "langara-courses-api",
     category: "build",
-    title: "Langara Courses API",
+    title: "Courses API",
     description: "Langara course data for your own projects.",
-    // The API root serves its interactive docs, which is where someone
-    // starting a project begins.
     href: LINKS.coursesApi,
   },
   {
@@ -75,7 +66,7 @@ export const RESOURCES: readonly Resource[] = [
     id: "share-your-feedback",
     category: "community",
     title: "Share your feedback",
-    description: "Have an idea for the club? We’d like to hear it.",
+    description: "A Google Form for ideas and feedback about the club.",
     href: LINKS.feedbackForm,
   },
 ];

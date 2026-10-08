@@ -1,29 +1,12 @@
-//Langara Computer Science Club Logo
-//
-// Vector taken from the Figma `LCS mark` component.
-//
-// `variant` decides how the mark colours itself:
-//
-//   theme (default) — follows the site theme. The lettering is `foreground`
-//                     (not `ink`) so it inverts in dark mode; filled with `ink`
-//                     it goes invisible on a dark ground.
-//   onDark          — fixed to the dark-mode colours, regardless of theme. For
-//                     surfaces that are dark in BOTH modes (the footer's
-//                     `bg-panel`), where a theme-following mark would show
-//                     black lettering on a dark panel in light mode.
-//
-// The two fills that vary are routed through local CSS variables so the
-// variant is one declaration, not a set of per-element overrides. The three
-// red squares never change: red is the one accent, in both modes.
+/** Figma LCS mark. onDark is for surfaces that stay dark in both themes. */
 const VARIANTS = {
   theme: {
     "--mark-ink": "var(--foreground)",
     "--mark-muted": "var(--muted-foreground)",
   },
   onDark: {
-    // The dark-mode values, pinned. Paper (not #fff) so it stays on-brand.
     "--mark-ink": "var(--color-paper)",
-    "--mark-muted": "#a39d95",
+    "--mark-muted": "var(--color-muted-dark)",
   },
 } as const;
 
@@ -41,27 +24,27 @@ export function LcsMark({
       viewBox="0 0 49 37"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      // Colour by class, not inline, so forced colors can replace it. An inline
+      // colour survived there and drew paper lettering on a white page.
+      className={`text-(--mark-ink) forced-colors:text-[CanvasText] ${className ?? ""}`}
       style={VARIANTS[variant] as React.CSSProperties}
       aria-hidden="true"
       focusable="false"
     >
-      {/* Lettering */}
       <path
         d="M1.37808 19V4.384H4.13424V16.4944H10.8158V19H1.37808Z"
-        fill="var(--mark-ink)"
+        fill="currentColor"
       />
       <path
         d="M17.7596 19.2923C15.95 19.2923 14.5162 18.7912 13.4583 17.789C12.4004 16.7728 11.8714 15.3251 11.8714 13.4459V9.93808C11.8714 8.05888 12.4004 6.61816 13.4583 5.61592C14.5162 4.59976 15.95 4.09168 17.7596 4.09168C19.5553 4.09168 20.9403 4.58584 21.9147 5.57416C22.903 6.54856 23.3972 7.89184 23.3972 9.604V9.72928H20.6828V9.52048C20.6828 8.65744 20.4392 7.94752 19.952 7.39072C19.4787 6.83392 18.7479 6.55552 17.7596 6.55552C16.7852 6.55552 16.0196 6.8548 15.4628 7.45336C14.906 8.05192 14.6276 8.86624 14.6276 9.89632V13.4877C14.6276 14.5038 14.906 15.3182 15.4628 15.9306C16.0196 16.5292 16.7852 16.8285 17.7596 16.8285C18.7479 16.8285 19.4787 16.5501 19.952 15.9933C20.4392 15.4226 20.6828 14.7126 20.6828 13.8635V13.4877H23.3972V13.78C23.3972 15.4922 22.903 16.8424 21.9147 17.8307C20.9403 18.8051 19.5553 19.2923 17.7596 19.2923Z"
-        fill="var(--mark-ink)"
+        fill="currentColor"
       />
       <path
         d="M30.7168 19.2923C29.5892 19.2923 28.594 19.0905 27.7309 18.6868C26.8679 18.2831 26.1928 17.7054 25.7056 16.9538C25.2184 16.2021 24.9748 15.2973 24.9748 14.2394V13.6547H27.6892V14.2394C27.6892 15.1163 27.9606 15.7775 28.5035 16.223C29.0464 16.6545 29.7841 16.8702 30.7168 16.8702C31.6633 16.8702 32.3663 16.6823 32.8256 16.3065C33.2989 15.9306 33.5356 15.4504 33.5356 14.8658C33.5356 14.4621 33.4172 14.135 33.1806 13.8844C32.9579 13.6338 32.6238 13.432 32.1784 13.2789C31.7468 13.1118 31.2179 12.9587 30.5915 12.8195L30.1112 12.7151C29.109 12.4924 28.246 12.214 27.5221 11.8799C26.8122 11.5319 26.2624 11.0795 25.8726 10.5227C25.4968 9.96592 25.3088 9.24208 25.3088 8.3512C25.3088 7.46032 25.5176 6.70168 25.9352 6.07528C26.3668 5.43496 26.9653 4.94776 27.7309 4.61368C28.5104 4.26568 29.4222 4.09168 30.4662 4.09168C31.5102 4.09168 32.4359 4.27264 33.2432 4.63456C34.0645 4.98256 34.7048 5.51152 35.1642 6.22144C35.6375 6.91744 35.8741 7.7944 35.8741 8.85232V9.47872H33.1597V8.85232C33.1597 8.29552 33.0484 7.85008 32.8256 7.516C32.6168 7.168 32.3106 6.91744 31.9069 6.76432C31.5032 6.59728 31.023 6.51376 30.4662 6.51376C29.631 6.51376 29.0116 6.67384 28.6079 6.994C28.2181 7.30024 28.0232 7.7248 28.0232 8.26768C28.0232 8.6296 28.1137 8.93584 28.2947 9.1864C28.4896 9.43696 28.7749 9.64576 29.1508 9.8128C29.5266 9.97984 30.0068 10.126 30.5915 10.2513L31.0717 10.3557C32.1157 10.5784 33.0205 10.8638 33.7861 11.2118C34.5656 11.5598 35.1712 12.0191 35.6027 12.5898C36.0342 13.1606 36.25 13.8914 36.25 14.7822C36.25 15.6731 36.0203 16.4596 35.5609 17.1417C35.1155 17.8098 34.4752 18.3388 33.64 18.7286C32.8187 19.1044 31.8443 19.2923 30.7168 19.2923Z"
-        fill="var(--mark-ink)"
+        fill="currentColor"
       />
-      <rect x="38.74" y="6.86" width="3.48" height="9.28" fill="var(--mark-ink)" />
+      <rect x="38.74" y="6.86" width="3.48" height="9.28" fill="currentColor" />
 
-      {/* Signature squares */}
       <rect y="26.48" width="9.86" height="9.86" fill="var(--color-red)" />
       <rect x="12.76" y="26.48" width="9.86" height="9.86" fill="var(--color-red)" />
       <rect x="25.52" y="26.48" width="9.86" height="9.86" fill="var(--color-red)" />

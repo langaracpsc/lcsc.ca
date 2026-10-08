@@ -4,31 +4,24 @@ import { PageIntro } from "../components/page-intro";
 import { BuildPrograms } from "../components/build/build-programs";
 import { FirstSession } from "../components/build/first-session";
 
-/** The intro's lead; it doubles as the meta description. */
 const DESCRIPTION =
-  "Two kinds of sessions: Build Nights for working on your own project, and Build Labs for learning something new in a guided workshop.";
+  "Build Nights are drop-in sessions where you work on your own project. Build Labs are guided workshops.";
 
+// Search results and link previews show the title without the site around
+// it, where the nav label "Build" says nothing.
 export const metadata: Metadata = {
-  title: "Build",
+  title: "Build Nights and Build Labs",
   description: DESCRIPTION,
 };
 
-/**
- * /build — the Figma's "Build / Desktop" (7:81) and "Build / Mobile"
- * (15:386): the intro, the three Build programs with the schedule notice, and
- * the first-session band.
- *
- * The route file owns the composition only; each section lives in
- * `components/build/`.
- */
-export default function BuildPage() {
+/** Figma "Build / Desktop" (7:81) and "Build / Mobile" (15:386). */
+export default function Build() {
   return (
     <PageShell>
       <PageIntro
         eyebrow="The Build Series"
-        title="Build things alongside other students."
+        title="Build Nights and Build Labs"
         description={DESCRIPTION}
-        note="Bring a laptop"
       />
       <BuildPrograms />
       <FirstSession />

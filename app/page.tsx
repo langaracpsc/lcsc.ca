@@ -8,23 +8,13 @@ import { CommunityPhotoBand } from "./components/home/community-photo-band";
 import { BuildOverview } from "./components/home/build-overview";
 import { EventsFeature } from "./components/home/events-feature";
 
-/**
- * No `title`: the home page keeps the root layout's default ("Langara Computer
- * Science Club") rather than "Home | Langara Computer Science Club". The
- * description is the hero's intro line.
- */
+// No title, so the layout's default is used; the description is the hero's intro.
 export const metadata: Metadata = {
   description:
     "A student-run club at Langara College for people who want to build things and get better at it together.",
 };
 
-/**
- * Home route: the shell, and the sections in page order.
- *
- * The route file owns the composition and nothing else — each section's
- * markup, copy and layout notes live in its own file under `components/home/`.
- * Order follows the Figma "Home / Desktop" frame (4:20) below the hero.
- */
+/** Figma "Home / Desktop" (4:20) and "Home / Mobile" (15:260). */
 export default function Home() {
   return (
     <PageShell>

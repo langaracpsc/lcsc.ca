@@ -4,8 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { Moon, Sun } from "lucide-react"
 import { flushSync } from "react-dom"
 
-import { cn } from "@/lib/utils"
-
 export type TransitionVariant =
   | "circle"
   | "square"
@@ -18,14 +16,9 @@ export type TransitionVariant =
 interface AnimatedThemeTogglerProps extends React.ComponentPropsWithoutRef<"button"> {
   duration?: number
   variant?: TransitionVariant
-  /** When true, the transition expands from the viewport center instead of the button center. */
   fromCenter?: boolean
-  /**
-   * Controlled theme value. When provided, the parent owns persistence
-   * (e.g. `next-themes`) and this component will not write to localStorage.
-   */
+  /** When set, the parent owns persistence and nothing is written to localStorage. */
   theme?: "light" | "dark"
-  /** Called on toggle. Pair with `theme` for controlled usage. */
   onThemeChange?: (theme: "light" | "dark") => void
 }
 
@@ -34,10 +27,9 @@ function polygonCollapsed(point: string, vertexCount: number): string {
   return `polygon(${pairs})`
 }
 
-// All coordinates are percentages of the snapshot reference box: Chrome 150
-// renders absolute px clip-path coordinates on ::view-transition-new(root)
-// unscaled on fractional display scales (e.g. Windows 150%) for the first
-// transition after load, so px values land at the wrong position (#989).
+// Percentages, not px: Chrome 150 draws px clip-paths on
+// ::view-transition-new(root) unscaled at fractional display scales (e.g.
+// Windows 150%) on the first transition after load (#989).
 function getThemeTransitionClipPaths(
   variant: TransitionVariant,
   cx: number,
@@ -295,7 +287,7 @@ export const AnimatedThemeToggler = ({
             },
             {
               duration,
-              // Star: linear avoids easing overshoot that fights polygon interpolation at t→1; VT group duration is synced above.
+              // Linear for the star: easing overshoot fights polygon interpolation near the end.
               easing: shape === "star" ? "linear" : "ease-in-out",
               fill: "forwards",
               pseudoElement: "::view-transition-new(root)",
@@ -320,7 +312,9 @@ export const AnimatedThemeToggler = ({
       type="button"
       ref={buttonRef}
       onClick={toggleTheme}
-      className={cn(className)}
+      // LOCAL PATCH (lcsc.ca): upstream's cn(className) put the class-merging
+      // library in every page's JS. Re-apply if the component is re-added.
+      className={className}
       {...props}
     >
       {isDark ? <Sun /> : <Moon />}

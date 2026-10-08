@@ -1,66 +1,56 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { typography } from "./typography";
 
-/**
- * How an href behaves on this site: an internal route (or an anchor on one)
- * goes through next/link; a `mailto:` hands off to the mail client, so no new
- * tab; anything else is a web URL that opens in a new tab and says so. The
- * footer, the program cards and TextLink all decide with this.
- */
+/** mailto: is its own kind so it opens the mail client without a new tab. */
 export function linkKind(href: string): "internal" | "mailto" | "external" {
   if (href.startsWith("/") || href.startsWith("#")) return "internal";
   if (href.startsWith("mailto:")) return "mailto";
   return "external";
 }
 
+export const NEW_TAB_TEXT = " (opens in a new tab)";
+
 /**
- * The cue an off-site link carries: the design's ↗, plus words for screen
- * readers, which would otherwise announce the arrow as "north east arrow" and
- * never mention the new tab. The non-breaking space keeps the arrow from
- * wrapping onto a line of its own.
- *
- * `spaced` gives the two-space gap the Figma sets before the arrow on buttons
- * and card actions ("Join the club  ↗"); inline links in a sentence take one.
+ * Screen readers get NEW_TAB_TEXT in place of the arrow glyph. The nbsp keeps
+ * the arrow off a line of its own; `spaced` is the Figma's two-space gap.
  */
 export function NewTabCue({ spaced = false }: { spaced?: boolean }) {
   return (
     <>
-      {spaced ? "  " : " "}
+      {spaced ? "\u00a0\u00a0" : "\u00a0"}
       <span aria-hidden="true">↗</span>
-      <span className="sr-only"> (opens in a new tab)</span>
+      <span className="sr-only">{NEW_TAB_TEXT}</span>
     </>
   );
 }
 
+const TEXT_LINK_TONE = {
+  brand: "text-brand font-semibold",
+  inherit: "font-semibold",
+} as const;
+
 /**
- * A link inside running text — a schedule note, an FAQ answer, a step. The
- * underline is always drawn, so the link never relies on colour alone; hover
- * thickens it. Inline links in a sentence are exempt from the 44px target
- * size (WCAG 2.5.8's inline exception), so there is no padding box.
- *
- * `href` decides the element (see `linkKind`): a `next/link` for internal
- * paths, a plain anchor for `mailto:`, and a new-tab anchor with the ↗ cue for
- * web URLs.
- *
- * Colour and weight come from `className`: `text-brand` on a light surface
- * (red that stays legible on ink in dark mode), nothing on the always-dark
- * bands so the link inherits paper.
+ * Always underlined so a link never relies on colour alone. Inline links are
+ * exempt from the 44px target size.
  */
 export function TextLink({
   href,
-  children,
+  tone = "brand",
   className,
+  children,
 }: {
   href: string;
-  children: ReactNode;
+  tone?: keyof typeof TEXT_LINK_TONE;
   className?: string;
+  children: ReactNode;
 }) {
   const classes = cn(
     "underline decoration-1 underline-offset-4 transition-[text-decoration-thickness] hover:decoration-2",
+    TEXT_LINK_TONE[tone],
     className
   );
-
   const kind = linkKind(href);
 
   if (kind === "internal") {
@@ -70,7 +60,6 @@ export function TextLink({
       </Link>
     );
   }
-
   if (kind === "mailto") {
     return (
       <a href={href} className={classes}>
@@ -78,11 +67,46 @@ export function TextLink({
       </a>
     );
   }
-
   return (
     <a href={href} target="_blank" rel="noreferrer" className={classes}>
       {children}
       <NewTabCue />
+    </a>
+  );
+}
+
+export function ButtonLink({
+  href,
+  tone,
+  className,
+  children,
+}: {
+  href: string;
+  tone?: NonNullable<Parameters<typeof typography.button>[0]>["tone"];
+  className?: string;
+  children: ReactNode;
+}) {
+  const classes = cn(typography.button({ tone }), className);
+  const kind = linkKind(href);
+
+  if (kind === "internal") {
+    return (
+      <Link href={href} className={classes}>
+        {children}&nbsp;&nbsp;<span aria-hidden="true">→</span>
+      </Link>
+    );
+  }
+  if (kind === "mailto") {
+    return (
+      <a href={href} className={classes}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <a href={href} target="_blank" rel="noreferrer" className={classes}>
+      {children}
+      <NewTabCue spaced />
     </a>
   );
 }
